@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Student Weekly Availability Form</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h2 { color: #333; }
+        .day { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
+        .time-block { margin-bottom: 10px; }
+        .time-block input[type="time"] { margin-right: 10px; }
+        .add-btn { margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <h2>Student Weekly Availability</h2>
+    <form id="availability-form" method="POST" action="https://script.google.com/macros/s/AKfycbzJ0IaWwyfhgIiui_fHccr-hFEMeQmQw3Qt-PajEu8yqzfNa6qvKGdDKPVlselyTBVSEg/exec">
+
+        <label for="studentName">Your Name:</label>
+        <input type="text" id="studentName" name="studentName" required><br><br>
+
+        <div id="week-schedule"></div>
+
+        <button type="submit">Submit Availability</button>
+    </form>
+
+    <script>
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const container = document.getElementById("week-schedule");
+
+        days.forEach(day => {
+            const dayDiv = document.createElement("div");
+            dayDiv.className = "day";
+            dayDiv.innerHTML = `
+                <h3>${day}</h3>
+                <label>
+                    <input type="checkbox" name="${day}_unavailable" onchange="toggleAvailability(this, '${day}')">
+                    Mark as Unavailable
+                </label>
+                <div id="${day}-time-blocks" class="time-blocks">
+                    <div class="time-block">
+                        From: <input type="time" name="${day}_from[]">
+                        To: <input type="time" name="${day}_to[]">
+                    </div>
+                </div>
+                <button type="button" class="add-btn" onclick="addTimeBlock('${day}')">+ Add Another Block</button>
+            `;
+            container.appendChild(dayDiv);
+        });
+
+        function addTimeBlock(day) {
+            const blocks = document.getElementById(`${day}-time-blocks`);
+            const block = document.createElement("div");
+            block.className = "time-block";
+            block.innerHTML = `
+                From: <input type="time" name="${day}_from[]">
+                To: <input type="time" name="${day}_to[]">
+                <button type="button" onclick="this.parentElement.remove()">Remove</button>
+            `;
+            blocks.appendChild(block);
+        }
+
+        function toggleAvailability(checkbox, day) {
+            const blocks = document.getElementById(`${day}-time-blocks`);
+            if (checkbox.checked) {
+                blocks.style.display = "none";
+            } else {
+                blocks.style.display = "block";
+            }
+        }
+    </script>
+
+</body>
+</html>
